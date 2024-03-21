@@ -13,7 +13,6 @@ section {
   background-image: linear-gradient(
     to bottom,
     rgb(255 255 255 / 50%),
-    rgb(0 0 255/ 20%)
+    rgb(204 255 144/ 70%)
   );
-  /* url("../src/assets/bg.jpg"); */
 }

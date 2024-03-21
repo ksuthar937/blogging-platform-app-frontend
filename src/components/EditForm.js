@@ -3,15 +3,13 @@ import TextField from "@mui/material/TextField";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import CreateIcon from "@mui/icons-material/Create";
 import { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../config";
 import toast from "react-hot-toast";
 
-export default function Form() {
+export default function EditForm({ id, fetchBlogs }) {
   const token = localStorage.getItem("token");
   const [open, setOpen] = useState(false);
 
@@ -21,37 +19,52 @@ export default function Form() {
     imageURL: "",
   };
 
-  const [postData, setPostData] = useState(initialData);
+  const [updateData, setUpdateData] = useState(initialData);
 
   const handleClickOpen = () => {
     setOpen(true);
+    getBlogData();
   };
 
   const handleClose = () => {
     setOpen(false);
-    setPostData(initialData);
+    setUpdateData(initialData);
   };
 
   const handlePostData = (e) => {
-    setPostData((preVal) => ({
+    setUpdateData((preVal) => ({
       ...preVal,
       [e.target.name]: e.target.value,
     }));
   };
 
-  const handleSubmit = async () => {
+  const getBlogData = async () => {
     try {
-      const res = await axios.post(`${API_URL}/blogs`, postData, {
+      const res = await axios.get(`${API_URL}/blogs/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
-      console.log(res);
-      toast.success("Blog Created");
+      if (res.status === 200) {
+        setUpdateData(res.data.blog);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await axios.put(`${API_URL}/blogs/${id}`, updateData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      toast.success("Blog Updated");
       setOpen(false);
-      setPostData(initialData);
-      window.location.reload();
+      setUpdateData(initialData);
+      fetchBlogs();
     } catch (error) {
       console.log(error);
       toast.error("Oops! Something Wrong");
@@ -60,35 +73,14 @@ export default function Form() {
 
   return (
     <>
-      <Button
-        variant="outlined"
-        endIcon={<CreateIcon />}
-        onClick={handleClickOpen}
-      >
-        Create Blog
+      <Button size="small" onClick={handleClickOpen}>
+        Edit
       </Button>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-        PaperProps={{
-          component: "form",
-          onSubmit: (event) => {
-            event.preventDefault();
-            const formData = new FormData(event.currentTarget);
-            const formJson = Object.fromEntries(formData.entries());
-            const email = formJson.email;
-            console.log(email);
-            handleClose();
-          },
-        }}
-      >
-        <DialogTitle>Create Blog</DialogTitle>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>Update Blog</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            To create a blog, please fill below required data.
-          </DialogContentText>
           <TextField
-            value={postData.title}
+            value={updateData.title}
             onChange={(e) => handlePostData(e)}
             autoFocus
             required
@@ -101,7 +93,7 @@ export default function Form() {
             variant="outlined"
           />
           <TextField
-            value={postData.description}
+            value={updateData.description}
             onChange={(e) => handlePostData(e)}
             required
             margin="dense"
@@ -115,7 +107,7 @@ export default function Form() {
             rows={4}
           />
           <TextField
-            value={postData.imageURL}
+            value={updateData.imageURL}
             onChange={(e) => handlePostData(e)}
             required
             margin="dense"
@@ -129,8 +121,8 @@ export default function Form() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleSubmit} type="submit">
-            Submit
+          <Button onClick={handleUpdate} type="submit">
+            Update
           </Button>
         </DialogActions>
       </Dialog>

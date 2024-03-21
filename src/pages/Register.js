@@ -48,7 +48,7 @@ const Register = () => {
       <form onSubmit={handleSubmit}>
         <Box
           sx={{
-            width: 320,
+            width: 360,
             mx: "auto",
             my: 8,
             py: 3,
@@ -62,7 +62,7 @@ const Register = () => {
         >
           <div>
             <Typography variant="h5">
-              <strong>Welcome!</strong>
+              <strong>Sign Up</strong>
             </Typography>
           </div>
           <FormControl>

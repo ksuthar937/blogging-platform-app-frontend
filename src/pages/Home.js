@@ -4,8 +4,9 @@ import { Box, Container, Typography } from "@mui/material";
 import axios from "axios";
 import { API_URL } from "../config";
 import Loader from "../components/Loader";
-import Form from "../components/Form";
 import toast from "react-hot-toast";
+import CreateForm from "../components/CreateForm";
+import { dateFormat } from "../utils/helper";
 
 const Home = () => {
   const token = localStorage.getItem("token");
@@ -36,13 +37,6 @@ const Home = () => {
     }
   };
 
-  let date = new Date().toLocaleDateString("en-us", {
-    weekday: "long",
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  });
-
   const handleDelete = async (id) => {
     try {
       const res = await axios.delete(`${API_URL}/blogs/${id}`, {
@@ -53,7 +47,7 @@ const Home = () => {
 
       if (res.status === 204) {
         toast.success("Blog deleted");
-        window.location.reload();
+        fetchBlogs();
       }
     } catch (error) {
       console.log(error);
@@ -77,9 +71,9 @@ const Home = () => {
           Welcome to daily blogging platform
         </Typography>
         <Typography variant="subtitle1" align="center">
-          {date}
+          {dateFormat(Date.now())}
         </Typography>
-        <Form />
+        <CreateForm fetchBlogs={fetchBlogs} />
       </Box>
       {isLoading ? (
         <Loader />
@@ -95,6 +89,7 @@ const Home = () => {
                   image={blog.imageURL}
                   handleDelete={handleDelete}
                   authorizedUser={blog.user === userLogin ? true : false}
+                  fetchBlogs={fetchBlogs}
                 />
               ))
             : null}

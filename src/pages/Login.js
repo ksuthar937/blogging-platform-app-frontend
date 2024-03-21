@@ -40,10 +40,10 @@ const Login = () => {
         toast.success("Login Successful");
         localStorage.setItem("token", res.data.token);
         localStorage.setItem("user", res.data.user);
-        navigate("/home");
+        navigate("/");
       }
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error("Oops! Login Failed");
       console.log(error);
     }
   };
@@ -53,7 +53,7 @@ const Login = () => {
       <form onSubmit={handleSubmit}>
         <Box
           sx={{
-            width: 320,
+            width: 360,
             mx: "auto",
             my: 8,
             py: 3,
@@ -65,12 +65,10 @@ const Login = () => {
             boxShadow: 3,
           }}
         >
-          <div>
-            <Typography variant="h5">
-              <strong>Welcome!</strong>
-            </Typography>
-            <Typography variant="body-sm">Sign in to continue.</Typography>
-          </div>
+          <Typography variant="h5">
+            <strong>Sign In</strong>
+          </Typography>
+
           <FormControl>
             <FormLabel>Email</FormLabel>
             <Input
